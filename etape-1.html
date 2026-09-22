@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice de phonétique : U vs OU</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --light: #F8F9FA;
+            --dark: #2C3E50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .progress {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-play {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .choices {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-choice {
+            flex: 1;
+            padding: 30px 10px;
+            font-size: 2rem;
+            background-color: var(--light);
+            color: var(--dark);
+            border: 2px solid #ddd;
+        }
+
+        .btn-choice span {
+            display: block;
+            font-size: 1rem;
+            font-weight: normal;
+            margin-top: 5px;
+            color: #7f8c8d;
+        }
+
+        .feedback {
+            min-height: 80px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .correct {
+            background-color: #d5f5e3;
+            color: var(--success);
+            display: block;
+        }
+
+        .incorrect {
+            background-color: #fadbd8;
+            color: var(--danger);
+            display: block;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="start-screen" class="screen active">
+            <h1>Discrimination auditive</h1>
+            <p>Écoute le mot et choisis le son que tu entends.</p>
+            <p><strong>[y]</strong> (comme "tu") ou <strong>[u]</strong> (comme "tout")</p>
+            <button class="btn btn-play" onclick="startGame()">Commencer l'exercice</button>
+        </div>
+
+        <div id="game-screen" class="screen">
+            <div class="progress">Mot <span id="current-word">1</span> / <span id="total-words">10</span></div>
+            
+            <button class="btn btn-play" onclick="playAudio()">🔊 Écouter le mot</button>
+
+            <div class="choices">
+                <button class="btn btn-choice" onclick="checkAnswer('U')">U <span>[y]</span></button>
+                <button class="btn btn-choice" onclick="checkAnswer('OU')">OU <span>[u]</span></button>
+            </div>
+
+            <button class="btn btn-play hidden" id="next-btn" onclick="nextWord()">Mot suivant ➔</button>
+
+            <div id="feedback-box" class="feedback"></div>
+        </div>
+
+        <div id="end-screen" class="screen">
+            <h1>Exercice terminé !</h1>
+            <p>Ton score : <strong id="score-display">0</strong> / <span id="final-total">10</span></p>
+            <button class="btn btn-play" onclick="location.reload()">Recommencer</button>
+        </div>
+    </div>
+
+    <script>
+        // Liste de vocabulaire (paires minimales et thématique littéraire/historique)
+        const wordList = [
+            { text: "tu", type: "U", pair: "tout", context: "Tu as compris ?" },
+            { text: "tout", type: "OU", pair: "tu", context: "Il a tout compris." },
+            { text: "duc", type: "U", pair: "doux", context: "Le duc est dans la tour." },
+            { text: "doux", type: "OU", pair: "duc", context: "Le velours est doux." },
+            { text: "vu", type: "U", pair: "vous", context: "J'ai vu le château." },
+            { text: "vous", type: "OU", pair: "vu", context: "Vous lisez Dumas ?" },
+            { text: "ruse", type: "U", pair: "rousse", context: "C'est une ruse du roi." },
+            { text: "cour", type: "OU", pair: "cure", context: "La cour de Louis XIV." },
+            { text: "lu", type: "U", pair: "loup", context: "Il a lu l'aventure." },
+            { text: "bravoure", type: "OU", pair: "bravure", context: "Une action de bravoure." },
+	 { text: "pour", type: "OU", pair: "pur", context: "Un pour tous, tous pour un !" },
+            { text: "pur", type: "U", pair: "pour", context: "Le chevalier a un cœur pur." },
+            { text: "roue", type: "OU", pair: "rue", context: "La roue du carrosse est brisée." },
+            { text: "rue", type: "U", pair: "roue", context: "D'Artagnan traverse la rue en courant." },
+            { text: "sous", type: "OU", pair: "su", context: "Le cachot secret est sous le château." },
+            { text: "su", type: "U", pair: "sous", context: "Le cardinal a su notre secret." },
+            { text: "boule", type: "OU", pair: "bulle", context: "Une boule de canon a frappé le mur." },
+            { text: "bulle", type: "U", pair: "boule", context: "Le parchemin est scellé par une bulle papale." },
+            { text: "sourd", type: "OU", pair: "sur", context: "Le geôlier est sourd à ses appels." },
+            { text: "sur", type: "U", pair: "sourd", context: "Le complot éclate sur la place publique." },
+            { text: "moule", type: "OU", pair: "mule", context: "Le forgeron prépare le moule de l'épée." },
+            { text: "mule", type: "U", pair: "moule", context: "Le moine voyage à dos de mule." },
+            { text: "bout", type: "OU", pair: "but", context: "Ils galopent jusqu'au bout du chemin." },
+            { text: "but", type: "U", pair: "bout", context: "Son but est de protéger la reine." },
+            { text: "bouche", type: "OU", pair: "bûche", context: "Le comploteur garde la bouche fermée." },
+            { text: "bûche", type: "U", pair: "bouche", context: "Jette une bûche dans la cheminée." },
+            { text: "pouce", type: "OU", pair: "puce", context: "Il s'est coupé le pouce avec sa lame." },
+            { text: "puce", type: "U", pair: "pouce", context: "Il y a une puce dans ce vieux lit d'auberge." }
+        ];
+
+        // Mélanger la liste de mots (Fisher-Yates)
+        let words = [...wordList].sort(() => Math.random() - 0.5);
+        
+        let currentIndex = 0;
+        let score = 0;
+        let synth = window.speechSynthesis;
+        let hasAnswered = false;
+
+        document.getElementById('total-words').textContent = words.length;
+        document.getElementById('final-total').textContent = words.length;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            
+            // Initialisation silencieuse de la synthèse vocale pour débloquer iOS/Android
+            let utterance = new SpeechSynthesisUtterance("");
+            synth.speak(utterance);
+            
+            setTimeout(playAudio, 500); // Joue le premier mot après un court délai
+        }
+
+        function playAudio() {
+            if (synth.speaking) {
+                synth.cancel(); // Coupe l'audio précédent si on reclique
+            }
+            
+            let utterance = new SpeechSynthesisUtterance(words[currentIndex].text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.85; // Légèrement ralenti pour mieux entendre
+            utterance.pitch = 1;
+            
+            synth.speak(utterance);
+        }
+
+        function checkAnswer(selectedType) {
+            if (hasAnswered) return; // Empêche de cliquer plusieurs fois
+            
+            hasAnswered = true;
+            let currentWord = words[currentIndex];
+            let feedbackBox = document.getElementById('feedback-box');
+            let nextBtn = document.getElementById('next-btn');
+            
+            if (selectedType === currentWord.type) {
+                score++;
+                feedbackBox.className = 'feedback correct';
+                feedbackBox.innerHTML = `✅ Bravo ! C'était bien le mot <strong>"${currentWord.text}"</strong>.<br><br><em>Exemple : ${currentWord.context}</em>`;
+            } else {
+                feedbackBox.className = 'feedback incorrect';
+                feedbackBox.innerHTML = `❌ Attention ! Tu as entendu <strong>"${currentWord.text}"</strong>, et non pas "${currentWord.pair}".<br><br><em>Exemple : ${currentWord.context}</em>`;
+            }
+
+            nextBtn.classList.remove('hidden');
+        }
+
+        function nextWord() {
+            currentIndex++;
+            hasAnswered = false;
+            
+            let feedbackBox = document.getElementById('feedback-box');
+            let nextBtn = document.getElementById('next-btn');
+            
+            feedbackBox.className = 'feedback';
+            nextBtn.classList.add('hidden');
+            
+            if (currentIndex < words.length) {
+                document.getElementById('current-word').textContent = currentIndex + 1;
+                playAudio();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('end-screen').classList.add('active');
+            document.getElementById('score-display').textContent = score;
+        }
+    </script>
+</body>
+</html>

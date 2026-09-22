@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étapes 4, 5 & 6 : Les Nasales</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9fafb;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 { color: var(--primary); }
+        h1 { text-align: center; border-bottom: 2px solid var(--secondary); padding-bottom: 10px; }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .intro {
+            font-size: 1.1em;
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* Boutons Audio */
+        .btn-audio {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            margin-right: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        .btn-audio:hover { transform: scale(1.1); background: #c0392b; }
+
+        /* Quiz de Discrimination */
+        .quiz-container { text-align: center; padding: 20px 0; border-top: 1px solid #ddd; margin-top: 15px;}
+        .mot-actuel {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        .btn-son {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-son:hover { background: var(--secondary); }
+        .btn-aucun { background: var(--warning); color: #fff; }
+        .btn-aucun:hover { background: #d68910; }
+        
+        .feedback { font-size: 1.2em; font-weight: bold; height: 30px; margin-top: 15px; }
+        .correct { color: var(--success); }
+        .incorrect { color: var(--secondary); }
+        .progression { font-size: 1.1em; margin-bottom: 15px; color: #7f8c8d; }
+
+        /* Étape 6 - Répétition */
+        .repetition-category { margin-bottom: 20px; }
+        .repetition-item {
+            display: flex;
+            align-items: center;
+            background: var(--light);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 4px solid var(--primary);
+            font-size: 1.1em;
+        }
+        .mot-cle { font-weight: bold; color: var(--secondary); }
+    </style>
+</head>
+<body>
+
+    <h1>Les mystères des voyelles nasales</h1>
+    <div class="intro">
+        <strong>Salut Ruslan !</strong><br>
+        Aujourd'hui, nous allons nous entraîner sur les sons qui passent par le nez. Fais bien attention : parfois, on voit les lettres "an", "on" ou "in" écrites, mais le mot ne contient <strong>pas</strong> de son nasal (par exemple, si elles sont suivies d'une voyelle ou d'une double consonne). À toi de jouer !
+    </div>
+
+    <!-- ÉTAPE 4 : DISCRIMINATION AN / ON -->
+    <div class="section">
+        <h2>Étape 4 : [ɑ̃] ou [ɔ̃] ?</h2>
+        <p>Écoute le mot. Entends-tu le son <strong>[ɑ̃]</strong> (comme dans <em>roman</em>), le son <strong>[ɔ̃]</strong> (comme dans <em>donjon</em>), ou <strong>aucun</strong> des deux ?</p>
+        
+        <div class="quiz-container" id="quiz-4">
+            <div class="progression" id="prog-4">Mot 1 / 15</div>
+            <div class="mot-actuel">
+                <button class="btn-audio" id="btn-audio-4" onclick="jouerAudioActuel(4)" title="Écouter">🔊</button>
+                <span id="texte-mot-4">...</span>
+            </div>
+            
+            <button class="btn-son" onclick="verifierSon(4, 'an')">[ɑ̃] (an/en)</button>
+            <button class="btn-son" onclick="verifierSon(4, 'on')">[ɔ̃] (on/om)</button>
+            <button class="btn-son btn-aucun" onclick="verifierSon(4, 'aucun')">Aucun</button>
+            
+            <div class="feedback" id="feed-4"></div>
+        </div>
+    </div>
+
+    <!-- ÉTAPE 5 : DISCRIMINATION ON / IN -->
+    <div class="section">
+        <h2>Étape 5 : [ɔ̃] ou [ɛ̃] ?</h2>
+        <p>Écoute le mot. Entends-tu le son <strong>[ɔ̃]</strong> (comme dans <em>sombre</em>), le son <strong>[ɛ̃]</strong> (comme dans <em>fin</em>), ou <strong>aucun</strong> des deux ?</p>
+        
+        <div class="quiz-container" id="quiz-5">
+            <div class="progression" id="prog-5">Mot 1 / 15</div>
+            <div class="mot-actuel">
+                <button class="btn-audio" id="btn-audio-5" onclick="jouerAudioActuel(5)" title="Écouter">🔊</button>
+                <span id="texte-mot-5">...</span>
+            </div>
+            
+            <button class="btn-son" onclick="verifierSon(5, 'on')">[ɔ̃] (on/om)</button>
+            <button class="btn-son" onclick="verifierSon(5, 'in')">[ɛ̃] (in/ain)</button>
+            <button class="btn-son btn-aucun" onclick="verifierSon(5, 'aucun')">Aucun</button>
+            
+            <div class="feedback" id="feed-5"></div>
+        </div>
+    </div>
+
+    <!-- ÉTAPE 6 : RÉPÉTITION -->
+    <div class="section">
+        <h2>Étape 6 : Entraînement à voix haute</h2>
+        <p>Ruslan, écoute la voix, puis répète en exagérant la position de ta bouche. Prends ton temps pour bien prononcer chaque nasale.</p>
+        
+        <div id="liste-repetition">
+            <!-- Rempli par JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // --- SYNTHÈSE VOCALE (Text-To-Speech) ---
+        const synth = window.speechSynthesis;
+
+        function parler(texte, vitesse = 0.8) {
+            synth.cancel(); 
+            const utterance = new SpeechSynthesisUtterance(texte);
+            utterance.lang = 'fr-FR'; 
+            utterance.rate = vitesse; 
+            utterance.pitch = 1;
+            
+            const voices = synth.getVoices();
+            const frVoice = voices.find(voice => voice.lang.includes('fr') && (voice.name.includes('Google') || voice.name.includes('Premium')));
+            if (frVoice) utterance.voice = frVoice;
+
+            synth.speak(utterance);
+        }
+
+        // --- DONNÉES DES QUIZ (15 mots chacun) ---
+        // Quiz 4 : [ɑ̃] vs [ɔ̃] vs Aucun (7 an, 6 on, 2 aucun = 15)
+        const motsEtape4 = [
+            { mot: "dans", son: "an" }, { mot: "donjon", son: "on" }, 
+            { mot: "année", son: "aucun" }, { mot: "pendant", son: "an" }, 
+            { mot: "sombre", son: "on" }, { mot: "avant", son: "an" }, 
+            { mot: "animal", son: "aucun" }, { mot: "comte", son: "on" }, 
+            { mot: "roman", son: "an" }, { mot: "complot", son: "on" }, 
+            { mot: "étudiant", son: "an" }, { mot: "ombre", son: "on" }, 
+            { mot: "légende", son: "an" }, { mot: "fond", son: "on" }, 
+            { mot: "franc", son: "an" }
+        ].sort(() => Math.random() - 0.5);
+
+        // Quiz 5 : [ɔ̃] vs [ɛ̃] vs Aucun (6 on, 7 in, 2 aucun = 15)
+        const motsEtape5 = [
+            { mot: "soudain", son: "in" }, { mot: "inédit", son: "aucun" }, 
+            { mot: "sombre", son: "on" }, { mot: "sonner", son: "aucun" }, 
+            { mot: "parchemin", son: "in" }, { mot: "donjon", son: "on" }, 
+            { mot: "fin", son: "in" }, { mot: "complot", son: "on" }, 
+            { mot: "incroyable", son: "in" }, { mot: "ombre", son: "on" }, 
+            { mot: "prince", son: "in" }, { mot: "comte", son: "on" }, 
+            { mot: "main", son: "in" }, { mot: "rond", son: "on" }, 
+            { mot: "destin", son: "in" }
+        ].sort(() => Math.random() - 0.5);
+
+        // État des Quiz
+        const state = {
+            4: { mots: motsEtape4, index: 0, score: 0, actif: true },
+            5: { mots: motsEtape5, index: 0, score: 0, actif: true }
+        };
+
+        function chargerMot(quizId) {
+            const q = state[quizId];
+            const elTexte = document.getElementById(`texte-mot-${quizId}`);
+            const elProg = document.getElementById(`prog-${quizId}`);
+            const elFeed = document.getElementById(`feed-${quizId}`);
+
+            if (q.index < q.mots.length) {
+                elTexte.textContent = q.mots[q.index].mot;
+                elProg.textContent = `Mot ${q.index + 1} / 15`;
+                elFeed.textContent = "";
+            } else {
+                finDuJeu(quizId);
+            }
+        }
+
+        function jouerAudioActuel(quizId) {
+            const q = state[quizId];
+            if (q.index < q.mots.length) {
+                parler(q.mots[q.index].mot, 0.8);
+            }
+        }
+
+        function verifierSon(quizId, reponse) {
+            const q = state[quizId];
+            if (!q.actif || q.index >= q.mots.length) return;
+
+            const bonneReponse = q.mots[q.index].son;
+            const elFeed = document.getElementById(`feed-${quizId}`);
+
+            if (reponse === bonneReponse) {
+                q.score++;
+                elFeed.textContent = "Bravo Ruslan !";
+                elFeed.className = "feedback correct";
+            } else {
+                let texteReponse = bonneReponse === 'aucun' ? "aucun son nasal" 
+                                 : `le son [${bonneReponse === 'an' ? 'ɑ̃' : (bonneReponse === 'on' ? 'ɔ̃' : 'ɛ̃')}]`;
+                elFeed.textContent = `Oups ! Il fallait choisir : ${texteReponse}.`;
+                elFeed.className = "feedback incorrect";
+            }
+
+            q.index++;
+            setTimeout(() => chargerMot(quizId), 1800);
+        }
+
+        function finDuJeu(quizId) {
+            const q = state[quizId];
+            q.actif = false;
+            document.getElementById(`prog-${quizId}`).textContent = "Exercice terminé !";
+            document.getElementById(`texte-mot-${quizId}`).innerHTML = `Score : ${q.score} / 15`;
+            document.getElementById(`btn-audio-${quizId}`).style.display = 'none';
+            
+            const conteneur = document.getElementById(`quiz-${quizId}`);
+            conteneur.querySelectorAll('.btn-son').forEach(btn => btn.style.display = 'none');
+            
+            const elFeed = document.getElementById(`feed-${quizId}`);
+            elFeed.textContent = q.score >= 12 ? "Excellent travail Ruslan !" : "Bien essayé, continue de t'entraîner !";
+            elFeed.className = "feedback " + (q.score >= 12 ? "correct" : "");
+        }
+
+
+        // --- ÉTAPE 6 : RÉPÉTITION (Génération des 30 éléments avec l'audio forcé) ---
+        // L'astuce ici : 'audio' contient des homophones ou mots réels séparés par "..." 
+        // pour forcer le TTS français à bien prononcer les voyelles nasales isolées.
+        const donneesRepetition = [
+            { type: "1. Syllabes : L'échauffement", items: [
+                { audio: "banc... bon... bain", html: "b<span class='mot-cle'>an</span> ➔ b<span class='mot-cle'>on</span> ➔ b<span class='mot-cle'>ain</span>" },
+                { audio: "tant... ton... teint", html: "t<span class='mot-cle'>an</span> ➔ t<span class='mot-cle'>on</span> ➔ t<span class='mot-cle'>eint</span>" },
+                { audio: "sang... son... saint", html: "s<span class='mot-cle'>an</span> ➔ s<span class='mot-cle'>on</span> ➔ s<span class='mot-cle'>ain</span>" },
+                { audio: "paon... pont... pain", html: "p<span class='mot-cle'>an</span> ➔ p<span class='mot-cle'>on</span> ➔ p<span class='mot-cle'>ain</span>" },
+                { audio: "dans... don... daim", html: "d<span class='mot-cle'>an</span> ➔ d<span class='mot-cle'>on</span> ➔ d<span class='mot-cle'>aim</span>" },
+                { audio: "ment... mon... main", html: "m<span class='mot-cle'>an</span> ➔ m<span class='mot-cle'>on</span> ➔ m<span class='mot-cle'>ain</span>" },
+                { audio: "camp... qu'on... quint", html: "c<span class='mot-cle'>an</span> ➔ c<span class='mot-cle'>on</span> ➔ qu<span class='mot-cle'>in</span>" },
+                { audio: "lent... long... l'un", html: "l<span class='mot-cle'>an</span> ➔ l<span class='mot-cle'>on</span> ➔ l<span class='mot-cle'>in</span>" },
+                { audio: "vend... vont... vin", html: "v<span class='mot-cle'>en</span> ➔ v<span class='mot-cle'>on</span> ➔ v<span class='mot-cle'>in</span>" },
+                { audio: "rend... rompt... reins", html: "r<span class='mot-cle'>an</span> ➔ r<span class='mot-cle'>on</span> ➔ r<span class='mot-cle'>in</span>" }
+            ]},
+            { type: "2. Mots isolés : Le vocabulaire du mystère", items: [
+                { audio: "Un étudiant", html: "Un étud<span class='mot-cle'>ian</span>t" },
+                { audio: "Pendant", html: "P<span class='mot-cle'>en</span>d<span class='mot-cle'>an</span>t" },
+                { audio: "Le donjon", html: "Le d<span class='mot-cle'>on</span>j<span class='mot-cle'>on</span>" },
+                { audio: "Sombre", html: "S<span class='mot-cle'>om</span>bre" },
+                { audio: "Le parchemin", html: "Le parchem<span class='mot-cle'>in</span>" },
+                { audio: "Un complot", html: "Un c<span class='mot-cle'>om</span>plot" },
+                { audio: "Incroyable", html: "<span class='mot-cle'>In</span>croyable" },
+                { audio: "La légende", html: "La lég<span class='mot-cle'>en</span>de" },
+                { audio: "Le prince", html: "Le pr<span class='mot-cle'>in</span>ce" },
+                { audio: "Le roman", html: "Le rom<span class='mot-cle'>an</span>" }
+            ]},
+            { type: "3. Phrases complètes : L'aventure", items: [
+                { audio: "Pendant les vacances, un étudiant est dans le donjon.", html: "P<span class='mot-cle'>en</span>d<span class='mot-cle'>an</span>t les vac<span class='mot-cle'>an</span>ces, un étud<span class='mot-cle'>ian</span>t est d<span class='mot-cle'>an</span>s le d<span class='mot-cle'>on</span>j<span class='mot-cle'>on</span>." },
+                { audio: "Il a trouvé un parchemin sombre et incroyable.", html: "Il a tr<span class='mot-cle'>ou</span>vé un parchem<span class='mot-cle'>in</span> s<span class='mot-cle'>om</span>bre et <span class='mot-cle'>in</span>croyable." },
+                { audio: "Le comte avait caché la fin du roman.", html: "Le c<span class='mot-cle'>om</span>te avait caché la f<span class='mot-cle'>in</span> du rom<span class='mot-cle'>an</span>." },
+                { audio: "Le prince attend sur le pont blanc.", html: "Le pr<span class='mot-cle'>in</span>ce att<span class='mot-cle'>en</span>d sur le p<span class='mot-cle'>on</span>t bl<span class='mot-cle'>an</span>c." },
+                { audio: "Mon oncle a un bon vieux moulin.", html: "M<span class='mot-cle'>on</span> <span class='mot-cle'>on</span>cle a un b<span class='mot-cle'>on</span> vieux moul<span class='mot-cle'>in</span>." },
+                { audio: "Soudain, le tintement de l'épée résonne.", html: "Soud<span class='mot-cle'>ain</span>, le t<span class='mot-cle'>in</span>tem<span class='mot-cle'>en</span>t de l'épée rés<span class='mot-cle'>on</span>ne." },
+                { audio: "Cent soldats francs sont en chemin.", html: "C<span class='mot-cle'>en</span>t soldats fr<span class='mot-cle'>an</span>cs s<span class='mot-cle'>on</span>t <span class='mot-cle'>en</span> chem<span class='mot-cle'>in</span>." },
+                { audio: "Le grand dragon crache une longue flamme.", html: "Le gr<span class='mot-cle'>an</span>d drag<span class='mot-cle'>on</span> crache une l<span class='mot-cle'>on</span>gue flamme." },
+                { audio: "Il tend la main vers le trésor lointain.", html: "Il t<span class='mot-cle'>en</span>d la m<span class='mot-cle'>ain</span> vers le trésor loint<span class='mot-cle'>ain</span>." },
+                { audio: "Le destin du monde est dans son camp.", html: "Le dest<span class='mot-cle'>in</span> du m<span class='mot-cle'>on</span>de est d<span class='mot-cle'>an</span>s s<span class='mot-cle'>on</span> c<span class='mot-cle'>am</span>p." }
+            ]}
+        ];
+
+        const containerRepetition = document.getElementById("liste-repetition");
+
+        donneesRepetition.forEach(categorie => {
+            const catDiv = document.createElement("div");
+            catDiv.className = "repetition-category";
+            catDiv.innerHTML = `<h3>${categorie.type}</h3>`;
+            
+            categorie.items.forEach(item => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "repetition-item";
+                
+                const btn = document.createElement("button");
+                btn.className = "btn-audio";
+                btn.innerHTML = "🔊";
+                // On ralentit très légèrement (0.85) pour la répétition
+                btn.onclick = () => parler(item.audio, 0.85); 
+                
+                const texte = document.createElement("span");
+                texte.innerHTML = item.html;
+                
+                itemDiv.appendChild(btn);
+                itemDiv.appendChild(texte);
+                catDiv.appendChild(itemDiv);
+            });
+            
+            containerRepetition.appendChild(catDiv);
+        });
+
+        // Lancement au démarrage
+        window.speechSynthesis.onvoiceschanged = () => {};
+        chargerMot(4);
+        chargerMot(5);
+    </script>
+</body>
+</html>

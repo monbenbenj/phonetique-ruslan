@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Entraînement Phonétique : [ø] et [œ]</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50E3C2;
+            --background: #F5F7FA;
+            --text: #333333;
+            --error: #E74C3C;
+            --success: #2ECC71;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: var(--primary); font-size: 1.8rem; }
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+        }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: 0.3s;
+        }
+        button:hover { opacity: 0.9; transform: scale(1.05); }
+        button:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            margin: 20px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--secondary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .mouth-animation {
+            font-size: 4rem;
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .mouth-state {
+            padding: 20px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            transition: 0.5s all;
+        }
+        .mouth-state.active { background: #ffeaa7; transform: scale(1.2); }
+        
+        .feedback { font-size: 1.2rem; font-weight: bold; min-height: 30px; margin: 10px 0; }
+        .success { color: var(--success); }
+        .error { color: var(--error); }
+        
+        .word-display { font-size: 2rem; font-weight: bold; margin: 20px 0; min-height: 40px;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Mission Phonétique : Le son "EU"</h1>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showSection('ecoute')">1. Écoute</button>
+        <button class="tab-btn" onclick="showSection('mecanique')">2. Mécanique</button>
+        <button class="tab-btn" onclick="showSection('repetition')">3. Répétition</button>
+    </div>
+
+    <div id="ecoute" class="section active">
+        <h2>Discrimination Auditive</h2>
+        <p>Écoutez le mot. Entendez-vous le son <strong>[eu]</strong> (lèvres en avant) ou le son <strong>[é/è]</strong> (sourire) ?</p>
+        
+        <div class="progress-container"><div id="prog-ecoute" class="progress-bar"></div></div>
+        
+        <button onclick="jouerMotActuel()" style="font-size: 2rem; border-radius: 50%; width: 70px; height: 70px;">🔊</button>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="verifierReponse(false)">Sourire [é / è]</button>
+            <button onclick="verifierReponse(true)">Bisou [eu]</button>
+        </div>
+        <div id="fb-ecoute" class="feedback"></div>
+    </div>
+
+    <div id="mecanique" class="section">
+        <h2>Le Sourire-Bisou</h2>
+        <p>L'astuce magique : Dites <strong>"É"</strong> en souriant. Gardez la langue immobile, et poussez vos lèvres en cul-de-poule (bisou). Le son devient <strong>"EU"</strong> !</p>
+        
+        <div class="mouth-animation">
+            <div id="mouth-e" class="mouth-state active">ÉÉÉ 😬</div>
+            <div>➡️</div>
+            <div id="mouth-eu" class="mouth-state">EU 😗</div>
+        </div>
+        
+        <button id="btn-animer" onclick="animerBouche()">Animer et Écouter</button>
+    </div>
+
+    <div id="repetition" class="section">
+        <h2>Répétition Vocale</h2>
+        <p>Écoutez, puis répétez dans le micro.</p>
+        
+        <div class="progress-container"><div id="prog-rep" class="progress-bar"></div></div>
+        
+        <div id="mot-a-repeter" class="word-display">...</div>
+        
+        <button onclick="jouerModele()">🔊 Écouter le modèle</button>
+        <button id="btn-micro" onclick="demarrerMicro()" style="background-color: var(--error);">🎙️ Parler</button>
+        
+        <div id="fb-rep" class="feedback"></div>
+        <button id="btn-suivant-rep" onclick="motSuivantRep()" style="display:none;">Suivant ➡️</button>
+    </div>
+</div>
+
+<script>
+    const synth = window.speechSynthesis;
+    let voixFR = null;
+
+    synth.onvoiceschanged = () => {
+        const voices = synth.getVoices();
+        voixFR = voices.find(v => v.lang.startsWith('fr')) || voices[0];
+    };
+
+    function normaliserPourVoix(texte) {
+        let t = texte.toLowerCase();
+        
+        const exceptions = {
+            "chœur": "keur",
+            "cœur": "keur",
+            "nœud": "neu",
+            "vœu": "veu",
+            "sœur": "seur",
+            "bœuf": "beuf",
+            "œuvre": "euvre"
+        };
+        
+        if (exceptions[t]) return exceptions[t];
+        
+        return t.replace(/œu/g, 'eu').replace(/œ/g, 'eu');
+    }
+
+    function parler(texte, vitesse = 0.9, onEndCallback = null) {
+        const texteNettoye = normaliserPourVoix(texte);
+        const utterThis = new SpeechSynthesisUtterance(texteNettoye);
+        utterThis.voice = voixFR;
+        utterThis.rate = vitesse;
+        if (onEndCallback) utterThis.onend = onEndCallback;
+        synth.speak(utterThis);
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    const listeMots = [
+        { mot: "fée", isEu: false }, { mot: "feu", isEu: true },
+        { mot: "père", isEu: false }, { mot: "peur", isEu: true },
+        { mot: "sel", isEu: false }, { mot: "seul", isEu: true },
+        { mot: "blé", isEu: false }, { mot: "bleu", isEu: true },
+        { mot: "dé", isEu: false }, { mot: "deux", isEu: true },
+        { mot: "gêne", isEu: false }, { mot: "jeune", isEu: true },
+        { mot: "flair", isEu: false }, { mot: "fleur", isEu: true },
+        { mot: "nez", isEu: false }, { mot: "nœud", isEu: true },
+        { mot: "serre", isEu: false }, { mot: "sœur", isEu: true },
+        { mot: "thé", isEu: false }, { mot: "vœu", isEu: true },
+        { mot: "mer", isEu: false }, { mot: "meurt", isEu: true },
+        { mot: "chair", isEu: false }, { mot: "chœur", isEu: true },
+        { mot: "belle", isEu: false }, { mot: "bœuf", isEu: true },
+        { mot: "bête", isEu: false }, { mot: "beurre", isEu: true }
+    ];
+    
+    let motsDiscrimination = listeMots.sort(() => Math.random() - 0.5);
+    let indexEcoute = 0;
+
+    function jouerMotActuel() {
+        parler(motsDiscrimination[indexEcoute].mot);
+    }
+
+    function verifierReponse(choixEu) {
+        const actuel = motsDiscrimination[indexEcoute];
+        const fb = document.getElementById('fb-ecoute');
+        
+        if (choixEu === actuel.isEu) {
+            fb.textContent = "Bravo ! C'était bien : " + actuel.mot;
+            fb.className = "feedback success";
+            setTimeout(() => {
+                indexEcoute++;
+                if (indexEcoute >= motsDiscrimination.length) {
+                    fb.textContent = "Exercice terminé !";
+                    indexEcoute = 0;
+                } else {
+                    fb.textContent = "";
+                    document.getElementById('prog-ecoute').style.width = ((indexEcoute / motsDiscrimination.length) * 100) + "%";
+                    jouerMotActuel();
+                }
+            }, 1500);
+        } else {
+            fb.textContent = "Écoutez encore...";
+            fb.className = "feedback error";
+            jouerMotActuel();
+        }
+    }
+
+    function animerBouche() {
+        const eMouth = document.getElementById('mouth-e');
+        const euMouth = document.getElementById('mouth-eu');
+        const btn = document.getElementById('btn-animer');
+        
+        btn.disabled = true;
+        eMouth.classList.add('active');
+        euMouth.classList.remove('active');
+        
+        parler("é... é... é...", 0.7, () => {
+            eMouth.classList.remove('active');
+            euMouth.classList.add('active');
+            // L'ajout du "h" force la prononciation du phonème [ø]
+            parler("euh... euh... euh...", 0.7, () => {
+                btn.disabled = false;
+            });
+        });
+    }
+
+    const listeRepetition = [
+        "feu", "peu", "jeu", "vœu", "sœur", "cœur",
+        "le feu", "la peur", "un peu", "il est seul", "elle est jeune",
+        "Le jeune bâtisseur n'est pas seul.", "Ils ont allumé deux grands feux."
+    ];
+    let indexRep = 0;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'fr-FR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+    }
+
+    function initRepetition() {
+        document.getElementById('mot-a-repeter').textContent = listeRepetition[indexRep];
+        document.getElementById('prog-rep').style.width = ((indexRep / listeRepetition.length) * 100) + "%";
+        document.getElementById('btn-suivant-rep').style.display = 'none';
+        document.getElementById('fb-rep').textContent = "";
+    }
+
+    function jouerModele() {
+        parler(listeRepetition[indexRep], 0.85);
+    }
+
+    function demarrerMicro() {
+        if (!recognition) {
+            alert("Reconnaissance vocale non supportée. Utilisez Chrome, Edge ou Safari.");
+            return;
+        }
+        
+        const fb = document.getElementById('fb-rep');
+        fb.textContent = "Écoute en cours... Parlez !";
+        fb.className = "feedback";
+        
+        try {
+            recognition.start();
+        } catch(e) {
+            console.log("Micro déjà actif");
+        }
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript.toLowerCase();
+            const cible = listeRepetition[indexRep].toLowerCase().replace(/[.,!]/g, '');
+            
+            if (transcript.includes(cible) || cible.includes(transcript)) {
+                fb.textContent = "Excellent ! (" + transcript + ")";
+                fb.className = "feedback success";
+            } else {
+                fb.textContent = "J'ai entendu : '" + transcript + "'.";
+                fb.className = "feedback error";
+            }
+            document.getElementById('btn-suivant-rep').style.display = 'inline-block';
+        };
+        
+        recognition.onspeechend = function() {
+            recognition.stop();
+        }
+
+        recognition.onerror = function(event) {
+            fb.textContent = (event.error === 'not-allowed') 
+                ? "Erreur : Accès au micro bloqué (vérifiez l'URL HTTPS)." 
+                : "Erreur micro : " + event.error;
+            fb.className = "feedback error";
+            document.getElementById('btn-suivant-rep').style.display = 'inline-block';
+        };
+    }
+
+    function motSuivantRep() {
+        indexRep++;
+        if (indexRep >= listeRepetition.length) {
+            document.getElementById('mot-a-repeter').textContent = "Bravo, vous avez terminé !";
+            document.getElementById('btn-suivant-rep').style.display = 'none';
+            document.getElementById('prog-rep').style.width = "100%";
+        } else {
+            initRepetition();
+        }
+    }
+
+    window.onload = initRepetition;
+
+</script>
+</body>
+</html>
