@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déblocage articulatoire : de [i] à [y]</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f0f4f8;
+            color: #2C3E50;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #4A90E2;
+            font-size: 1.4rem;
+        }
+
+        .instructions {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 0.95rem;
+            color: #34495e;
+            border-left: 4px solid #4A90E2;
+            text-align: left;
+        }
+
+        /* --- L'ANIMATION DE LA BOUCHE --- */
+        .face {
+            margin: 40px auto;
+            width: 200px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .lips {
+            /* État initial : Le son [i] (lèvres étirées) */
+            width: 160px;
+            height: 40px;
+            border: 15px solid #ff7675; /* Couleur des lèvres */
+            background-color: #2d3436; /* Intérieur de la bouche */
+            border-radius: 30px;
+            
+            /* La magie de l'animation : tout changement prendra 1.5 seconde */
+            transition: all 1.5s ease-in-out; 
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* État final : Le son [y] (lèvres arrondies) */
+        .lips.rounded {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%; /* Transforme le rectangle en cercle parfait */
+            border-width: 20px;
+        }
+
+        /* -------------------------------- */
+
+        .btn {
+            background-color: #4A90E2;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #phoneme-text {
+            font-size: 2.5rem;
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: -20px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Le passage secret du [i] au [y]</h1>
+        
+        <div class="instructions">
+            <strong>Consigne :</strong> Dis un long [i]. Pendant que tu fais ce son, avance tes lèvres comme pour souffler une bougie. <strong>Surtout, ne recule pas ta langue !</strong>
+        </div>
+
+        <div id="phoneme-text">[i]</div>
+
+        <div class="face">
+            <div class="lips" id="mouth"></div>
+        </div>
+
+        <button class="btn" id="play-btn" onclick="playAnimation()">▶️ Écouter et voir</button>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let synth = window.speechSynthesis;
+
+        function playAnimation() {
+            if (isPlaying) return;
+            isPlaying = true;
+
+            const mouth = document.getElementById('mouth');
+            const text = document.getElementById('phoneme-text');
+            const btn = document.getElementById('play-btn');
+
+            btn.disabled = true;
+
+            // 1. Initialisation de la synthèse vocale
+            // On lui fait dire un long "i", puis un long "u"
+            let utterance1 = new SpeechSynthesisUtterance("iiiiiiiiiiiiii");
+            let utterance2 = new SpeechSynthesisUtterance("uuuuuuuuuuuuuu");
+            
+            utterance1.lang = 'fr-FR';
+            utterance2.lang = 'fr-FR';
+            
+            // On ralentit la voix pour que le son dure plus longtemps
+            utterance1.rate = 0.4;
+            utterance2.rate = 0.4;
+
+            // 2. Lancement de l'audio
+            synth.speak(utterance1);
+            
+            // 3. Synchronisation de l'animation visuelle
+            // Au bout de 1,8 secondes, on lance le son "u" et on arrondit la bouche
+            setTimeout(() => {
+                synth.speak(utterance2);
+                mouth.classList.add('rounded'); // Déclenche l'animation CSS
+                text.innerText = "[y]";
+            }, 1800);
+
+            // 4. Remise à zéro à la fin de l'exercice
+            setTimeout(() => {
+                mouth.classList.remove('rounded');
+                text.innerText = "[i]";
+                btn.disabled = false;
+                isPlaying = false;
+            }, 4500);
+        }
+    </script>
+</body>
+</html>

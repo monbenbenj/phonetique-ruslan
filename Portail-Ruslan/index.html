@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace d'entraînement de Ruslan</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #4A90E2;
+            --accent: #E67E22;
+            --light: #F8F9FA;
+            --text: #34495e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ecf0f1;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 900px; /* Élargi pour s'aligner avec la grille */
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-top: 0;
+            font-style: italic;
+        }
+
+        .menu-container {
+            width: 100%;
+            max-width: 900px; /* Élargi pour permettre plusieurs colonnes */
+            display: grid; /* Remplace flexbox pour créer des colonnes */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Colonnes automatiques et responsives */
+            gap: 15px;
+        }
+
+        .menu-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--secondary);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+        }
+
+        .menu-card:active {
+            transform: scale(0.98);
+        }
+
+        .menu-card h2 {
+            margin: 0 0 8px 0;
+            font-size: 1.3rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #7f8c8d;
+        }
+
+        /* Couleurs spécifiques pour chaque module */
+        .card-1 { border-left-color: #3498db; }
+        .card-2 { border-left-color: #9b59b6; }
+        .card-3 { border-left-color: #e67e22; }
+        .card-4 { border-left-color: #27ae60; } /* Vert pour les nasales */
+        .card-7 { border-left-color: #e74c3c; } /* Rouge pour le son eu */
+        .card-8 { border-left-color: #f1c40f; } /* Jaune pour les sons eu/o */
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.85rem;
+            color: #bdc3c7;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>L'entraînement de Ruslan</h1>
+        <p>Phonétique et prononciation française</p>
+    </div>
+
+    <div class="menu-container">
+        
+        <!-- Module 1 : L'exercice d'écoute -->
+        <a href="etape-1.html" class="menu-card card-1">
+            <h2>🎧 Étape 1 : Le son du donjon</h2>
+            <p>Discrimination auditive. Apprends à faire la différence entre les sons [y] (tu) et [u] (tout) cachés dans le vocabulaire.</p>
+        </a>
+
+        <!-- Module 2 : L'animation de la bouche -->
+        <a href="etape-2.html" class="menu-card card-2">
+            <h2>👄 Étape 2 : Le passage secret</h2>
+            <p>Déblocage articulatoire. Observe l'animation et entraîne-toi à transformer le son [i] en son [y] d'un seul souffle.</p>
+        </a>
+
+        <!-- Module 3 : La prosodie (prêt pour plus tard) -->
+        <a href="etape-3.html" class="menu-card card-3">
+            <h2>🎭 Étape 3 : Répétitions</h2>
+            <p>Répètes pour apprendre! Travaille la prononciation du son [y].</p>
+        </a>
+        
+        <!-- Module 4, 5, 6 : Les nasales -->
+        <a href="etape4-5-6.html" class="menu-card card-4">
+            <h2>👃 Étapes 4, 5 et 6 : Les nasales</h2>
+            <p>Discrimination et répétition. Apprends à différencier et prononcer les sons [ɑ̃], [ɔ̃] et [ɛ̃] sans tomber dans les pièges de l'orthographe.</p>
+        </a>
+
+        <!-- Module 7 : Le son eu -->
+        <a href="etape-7.html" class="menu-card card-7">
+            <h2>😙 Étape 7 : le son eu</h2>
+            <p>Discrimination, mécanique et répétition. Maîtrise l'arrondissement des lèvres avec la technique du sourire-bisou.</p>
+        </a>
+
+        <!-- Module 8 : Les sons eu / o -->
+        <a href="etape-8.html" class="menu-card card-8">
+            <h2>🎯 Étape 8 : Les sons [œ]/[ø] vs [o]/[ɔ]</h2>
+            <p>Nouveau jeu ! Entraîne-toi à distinguer et prononcer correctement les sons "eu" et "o".</p>
+        </a>
+
+    </div>
+
+    <div class="footer">
+        Travail en autonomie • Sur le chemin de l'excellence[cite: 1]
+    </div>
+
+</body>
+</html>

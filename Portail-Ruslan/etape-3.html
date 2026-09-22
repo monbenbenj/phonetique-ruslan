@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Répétition facilitée : le son [y]</title>
+    <style>
+        :root {
+            --primary: #8E44AD; /* Violet pour différencier ce module */
+            --light: #F8F9FA;
+            --dark: #2C3E50;
+            --gray: #7f8c8d;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f1f6;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .instructions {
+            font-size: 0.95rem;
+            color: var(--gray);
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+
+        .progress-bar {
+            background-color: #eee;
+            border-radius: 10px;
+            height: 8px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background-color: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background-color: #e8daef;
+            color: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .text-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--dark);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--light);
+            border-radius: 15px;
+            border: 2px dashed #dcdde1;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-play {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+        }
+
+        .btn-next {
+            background-color: transparent;
+            color: var(--gray);
+            border: 2px solid #bdc3c7;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+        
+        .highlight { color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Écran d'accueil -->
+        <div id="start-screen" class="screen active">
+            <h1>L'écho du donjon</h1>
+            <p class="instructions">Écoute attentivement la voix, puis répète exactement la même mélodie en gardant les lèvres bien en avant.</p>
+            <button class="btn btn-play" onclick="startGame()">▶️ Commencer l'entraînement</button>
+        </div>
+
+        <!-- Écran de jeu -->
+        <div id="game-screen" class="screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div class="category-badge" id="category-badge">Syllabes</div>
+
+            <div class="text-display" id="text-display">tu</div>
+
+            <button class="btn btn-play" onclick="playAudio()">🔊 Écouter</button>
+            <button class="btn btn-next" onclick="nextItem()">Suivant ➔</button>
+        </div>
+
+        <!-- Écran de fin -->
+        <div id="end-screen" class="screen">
+            <h1>Entraînement terminé !</h1>
+            <p class="instructions">Excellente diction. Tes muscles articulatoires commencent à mémoriser la bonne position.</p>
+            <button class="btn btn-play" onclick="location.reload()">🔄 Recommencer</button>
+        </div>
+
+    </div>
+
+    <script>
+        // La liste des 20 éléments (10 syllabes facilitantes + 10 phrases thématiques)
+        const items = [
+            // Phase 1 : Syllabes simples (consonnes dentales t, d, s, l, n + y)
+            { text: "tu", category: "Échauffement" },
+            { text: "du", category: "Échauffement" },
+            { text: "lu", category: "Échauffement" },
+            { text: "su", category: "Échauffement" },
+            { text: "nu", category: "Échauffement" },
+            { text: "tutu", category: "Répétition" },
+            { text: "lulu", category: "Répétition" },
+            { text: "dudu", category: "Répétition" },
+            { text: "susu", category: "Répétition" },
+            { text: "nunu", category: "Répétition" },
+            
+            // Phase 2 : Phrases courtes d'entraînement (vocabulaire historique/Dumas)
+            { text: "Tu as lu.", category: "Phrases courtes" },
+            { text: "Le duc a su.", category: "Phrases courtes" },
+            { text: "Salut, Luc !", category: "Phrases courtes" },
+            { text: "Le tissu du duc.", category: "Phrases courtes" },
+            { text: "Tu salues le duc.", category: "Phrases courtes" },
+            { text: "Le duc de Sully.", category: "Phrases courtes" },
+            { text: "Une mule sur la dune.", category: "Phrases courtes" },
+            { text: "Il a su la ruse.", category: "Phrases courtes" },
+            { text: "Luc étudie la lune.", category: "Phrases courtes" },
+            { text: "Le salut du Sud.", category: "Phrases courtes" }
+        ];
+
+        let currentIndex = 0;
+        let synth = window.speechSynthesis;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('game-screen').classList.add('active');
+            
+            // Initialisation silencieuse sur mobile
+            let utterance = new SpeechSynthesisUtterance("");
+            synth.speak(utterance);
+            
+            updateDisplay();
+            setTimeout(playAudio, 600); // Joue le premier mot automatiquement
+        }
+
+        function updateDisplay() {
+            let currentItem = items[currentIndex];
+            
+            // Met à jour le texte
+            document.getElementById('text-display').innerText = currentItem.text;
+            
+            // Met à jour la catégorie
+            document.getElementById('category-badge').innerText = currentItem.category;
+            
+            // Met à jour la barre de progression
+            let progressPercentage = ((currentIndex) / items.length) * 100;
+            document.getElementById('progress').style.width = progressPercentage + "%";
+        }
+
+        function playAudio() {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            
+            let utterance = new SpeechSynthesisUtterance(items[currentIndex].text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.75; // Élocution ralentie pour bien entendre le son cible
+            utterance.pitch = 1;
+            
+            synth.speak(utterance);
+        }
+
+        function nextItem() {
+            if (synth.speaking) {
+                synth.cancel(); // Coupe le son si on passe au suivant pendant la lecture
+            }
+
+            currentIndex++;
+            
+            if (currentIndex < items.length) {
+                updateDisplay();
+                playAudio();
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            document.getElementById('game-screen').classList.remove('active');
+            document.getElementById('end-screen').classList.add('active');
+            document.getElementById('progress').style.width = "100%";
+        }
+    </script>
+</body>
+</html>

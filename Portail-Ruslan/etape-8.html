@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonétique : [œ]/[ø] vs [o]/[ɔ]</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #F39C12;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --bg-color: #F8F9F9;
+            --text-color: #2C3E50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #BDC3C7;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+        }
+
+        .phase-container {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .phase-container.active {
+            display: block;
+        }
+
+        /* Communs aux phases */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 15px;
+            font-size: 18px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .btn:active { transform: scale(0.95); }
+
+        /* Phase 2: Quiz */
+        .quiz-area {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .play-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            font-size: 35px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .quiz-feedback {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 35px;
+        }
+        
+        .hidden-word {
+            font-size: 20px;
+            color: #7F8C8D;
+            margin-bottom: 15px;
+            min-height: 25px;
+        }
+
+        .next-btn {
+            background-color: #34495E;
+            margin-top: 20px;
+            display: none; /* Caché au départ */
+        }
+
+        /* Phase 3: Mise en place */
+        .phonatory-box {
+            background: #EAF2F8;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* Phase 4: Production */
+        .production-area { text-align: center; margin-top: 20px; }
+        .word-display { font-size: 40px; font-weight: bold; margin: 20px 0; color: var(--primary); }
+        .mic-btn {
+            background-color: var(--danger);
+            color: white; border: none; border-radius: 50%;
+            width: 80px; height: 80px; font-size: 30px;
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .mic-btn.listening { background-color: var(--success); animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .feedback { margin-top: 20px; font-size: 18px; font-weight: bold; min-height: 25px; }
+        .progress { margin-top: 15px; color: #7F8C8D; font-size: 14px; }
+        .attempts-counter { font-size: 14px; color: var(--secondary); margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <h1>Phonétique : [œ]/[ø] vs [o]/[ɔ]</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showPhase(1)">1. Découverte</button>
+        <button class="tab-btn" onclick="showPhase(2)">2. Écoute (Quiz)</button>
+        <button class="tab-btn" onclick="showPhase(3)">3. Position</button>
+        <button class="tab-btn" onclick="showPhase(4)">4. Production</button>
+    </div>
+
+    <!-- PHASE 1 : DECOUVERTE -->
+    <div id="phase1" class="phase-container active">
+        <h2>Écoutez la différence</h2>
+        <p>Cliquez sur les mots pour entendre la différence entre les sons arrondis antérieurs ([œ]/[ø]) et postérieurs ([o]/[ɔ]).</p>
+        
+        <div class="grid-2">
+            <h3 style="text-align:center;">Sons [o] / [ɔ]</h3>
+            <h3 style="text-align:center;">Sons [ø] / [œ]</h3>
+            
+            <button class="btn" onclick="speak('jaune')">Jaune</button>
+            <button class="btn" onclick="speak('jeune')">Jeune</button>
+            
+            <button class="btn" onclick="speak('faux')">Faux</button>
+            <button class="btn" onclick="speak('feu')">Feu</button>
+            
+            <button class="btn" onclick="speak('do')">Dos</button> <!-- Correction 'do' au lieu de 'dos' -->
+            <button class="btn" onclick="speak('deux')">Deux</button>
+            
+            <button class="btn" onclick="speak('por')">Port</button>
+            <button class="btn" onclick="speak('peur')">Peur</button>
+        </div>
+    </div>
+
+    <!-- PHASE 2 : QUIZ AUDITIF -->
+    <div id="phase2" class="phase-container">
+        <h2>Entraînement : Que dit-on ?</h2>
+        <p>Écoutez le mot puis choisissez le bon son.</p>
+        
+        <div class="quiz-area">
+            <button class="play-btn" onclick="playQuizAudio()">▶️</button>
+            
+            <div id="quizHiddenWord" class="hidden-word">???</div>
+            
+            <div class="grid-2">
+                <button class="btn" onclick="checkQuizAnswer('o')" style="background-color: #9B59B6;">Son [o] / [ɔ]<br><small>(ex: faux, jaune)</small></button>
+                <button class="btn" onclick="checkQuizAnswer('eu')" style="background-color: #3498DB;">Son [œ] / [ø]<br><small>(ex: feu, jeune)</small></button>
+            </div>
+
+            <div id="quizFeedback" class="quiz-feedback"></div>
+            <button id="quizNextBtn" class="btn next-btn" onclick="nextQuizWord()">Mot suivant ⏭️</button>
+            <div id="quizProgress" class="progress"></div>
+        </div>
+    </div>
+
+    <!-- PHASE 3 : MISE EN PLACE -->
+    <div id="phase3" class="phase-container">
+        <h2>Mise en place phonatoire</h2>
+        <div class="phonatory-box">
+            <h3>👄 Pour le son [o] / [ɔ] (ex: jaune, faux)</h3>
+            <p><strong>Lèvres :</strong> Très arrondies (en cercle).<br>
+            <strong>Langue :</strong> En arrière (dans le fond de la bouche).<br>
+            <em>Astuce :</em> Pense au son "O" classique ou à la surprise "Oh !".</p>
+        </div>
+        <div class="phonatory-box">
+            <h3>👄 Pour le son [ø] / [œ] (ex: jeune, feu)</h3>
+            <p><strong>Lèvres :</strong> Toujours arrondies !<br>
+            <strong>Langue :</strong> <strong>En avant</strong> (derrière les dents du bas, comme pour dire "é").<br>
+            <em>L'astuce magique :</em> Dis "éééééé" et, sans bouger la langue, avance tes lèvres pour faire un rond.</p>
+        </div>
+    </div>
+
+    <!-- PHASE 4 : PRODUCTION -->
+    <div id="phase4" class="phase-container">
+        <h2>À vous de parler !</h2>
+        <p>Lisez le mot qui s'affiche. (Maximum 3 essais par mot)</p>
+        
+        <div class="production-area">
+            <div id="wordDisplay" class="word-display">Mot</div>
+            <button id="micBtn" class="mic-btn" onclick="toggleRecognition()">🎤</button>
+            <div id="feedback" class="feedback">Appuyez sur le micro pour commencer</div>
+            <div id="attemptsDisplay" class="attempts-counter"></div>
+            <div id="progress" class="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- SYNTHESE VOCALE GENERALE ---
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'fr-FR';
+            utterance.rate = 0.8; 
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- NAVIGATION DES PHASES ---
+        function showPhase(phase) {
+            document.querySelectorAll('.phase-container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('phase' + phase).classList.add('active');
+            document.querySelectorAll('.tab-btn')[phase-1].classList.add('active');
+        }
+
+        // --- PHASE 2 : LOGIQUE DU QUIZ ---
+        // 20 mots (10 paires minimales)
+        const quizWords = [
+            { word: "Feu", tts: "feu", sound: "eu" }, { word: "Faux", tts: "faux", sound: "o" },
+            { word: "Deux", tts: "deux", sound: "eu" }, { word: "Dos", tts: "do", sound: "o" },
+            { word: "Peu", tts: "peu", sound: "eu" }, { word: "Pot", tts: "po", sound: "o" },
+            { word: "Peur", tts: "peur", sound: "eu" }, { word: "Port", tts: "por", sound: "o" },
+            { word: "Cœur", tts: "coeur", sound: "eu" }, { word: "Corps", tts: "cor", sound: "o" },
+            { word: "Sœur", tts: "soeur", sound: "eu" }, { word: "Sort", tts: "sort", sound: "o" },
+            { word: "Vœu", tts: "veut", sound: "eu" }, { word: "Veau", tts: "veau", sound: "o" },
+            { word: "Nœud", tts: "ne", sound: "eu" }, { word: "Nos", tts: "no", sound: "o" },
+            { word: "Ceux", tts: "ceux", sound: "eu" }, { word: "Seau", tts: "so", sound: "o" },
+            { word: "Heure", tts: "heure", sound: "eu" }, { word: "Or", tts: "or", sound: "o" }
+        ];
+
+        // Mélanger le tableau pour que l'ordre change
+        quizWords.sort(() => Math.random() - 0.5);
+
+        let currentQuizIndex = 0;
+        let quizHasAnswered = false;
+
+        function updateQuizUI() {
+            document.getElementById("quizHiddenWord").textContent = "???";
+            document.getElementById("quizFeedback").textContent = "";
+            document.getElementById("quizNextBtn").style.display = "none";
+            document.getElementById("quizProgress").textContent = `Mot ${currentQuizIndex + 1} / ${quizWords.length}`;
+            quizHasAnswered = false;
+        }
+
+        function playQuizAudio() {
+            speak(quizWords[currentQuizIndex].tts);
+        }
+
+        function checkQuizAnswer(selectedSound) {
+            if (quizHasAnswered) return;
+            
+            const currentItem = quizWords[currentQuizIndex];
+            const feedbackEl = document.getElementById("quizFeedback");
+            const hiddenWordEl = document.getElementById("quizHiddenWord");
+            
+            hiddenWordEl.textContent = currentItem.word; // On révèle le mot
+            quizHasAnswered = true;
+
+            if (selectedSound === currentItem.sound) {
+                feedbackEl.textContent = "✅ Bravo !";
+                feedbackEl.style.color = "var(--success)";
+            } else {
+                feedbackEl.textContent = "❌ Oups !";
+                feedbackEl.style.color = "var(--danger)";
+            }
+            
+            document.getElementById("quizNextBtn").style.display = "inline-block";
+        }
+
+        function nextQuizWord() {
+            currentQuizIndex++;
+            if (currentQuizIndex < quizWords.length) {
+                updateQuizUI();
+                playQuizAudio(); // Joue automatiquement le suivant
+            } else {
+                document.getElementById("quizHiddenWord").textContent = "🎉 Fini !";
+                document.getElementById("quizFeedback").textContent = "Excellent travail !";
+                document.getElementById("quizNextBtn").style.display = "none";
+            }
+        }
+
+        // Init Phase 2
+        updateQuizUI();
+
+
+        // --- PHASE 4 : RECONNAISSANCE VOCALE ---
+        const productionWordsList = [
+            { text: "Jaune", expected: ["jaune", "jon"] },
+            { text: "Jeune", expected: ["jeune", "jeun"] },
+            { text: "Faux", expected: ["faux", "faut", "fo"] },
+            { text: "Feu", expected: ["feu"] },
+            { text: "Dos", expected: ["dos", "do"] },
+            { text: "Deux", expected: ["deux", "de"] },
+            { text: "Cœur", expected: ["cœur", "coeur", "choeur"] },
+            { text: "Corps", expected: ["corps", "cor"] }
+        ];
+
+        let currentWordIndex = 0;
+        let currentAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+        
+        const wordDisplay = document.getElementById('wordDisplay');
+        const feedback = document.getElementById('feedback');
+        const micBtn = document.getElementById('micBtn');
+        const progressDisplay = document.getElementById('progress');
+        const attemptsDisplay = document.getElementById('attemptsDisplay');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+        let isListening = false;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'fr-FR';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 3;
+
+            recognition.onstart = function() {
+                isListening = true;
+                micBtn.classList.add('listening');
+                feedback.textContent = "Je vous écoute...";
+                feedback.style.color = "var(--text-color)";
+            };
+
+            recognition.onresult = function(event) {
+                let recognized = false;
+                for (let i = 0; i < event.results[0].length; i++) {
+                    let transcript = event.results[0][i].transcript.trim().toLowerCase();
+                    if (productionWordsList[currentWordIndex].expected.includes(transcript)) {
+                        recognized = true;
+                        break;
+                    }
+                }
+
+                currentAttempts++;
+
+                if (recognized) {
+                    feedback.textContent = "✅ Parfait !";
+                    feedback.style.color = "var(--success)";
+                    setTimeout(nextProdWord, 1500);
+                } else {
+                    let transcriptSpoken = event.results[0][0].transcript;
+                    if (currentAttempts >= MAX_ATTEMPTS) {
+                        feedback.textContent = `Entendu : "${transcriptSpoken}". Passons au suivant ! ⏭️`;
+                        feedback.style.color = "var(--secondary)";
+                        setTimeout(nextProdWord, 2000);
+                    } else {
+                        feedback.textContent = `❌ Entendu : "${transcriptSpoken}". Essayez encore !`;
+                        feedback.style.color = "var(--danger)";
+                        updateAttemptsDisplay();
+                    }
+                }
+            };
+
+            recognition.onerror = function(event) {
+                feedback.textContent = "Erreur de microphone. Veuillez réessayer.";
+                feedback.style.color = "var(--danger)";
+                stopListening();
+            };
+
+            recognition.onend = function() {
+                stopListening();
+            };
+        } else {
+            feedback.textContent = "La reconnaissance vocale n'est pas supportée. Utilisez Chrome sur Android.";
+            feedback.style.color = "var(--danger)";
+        }
+
+        function toggleRecognition() {
+            if (isListening) {
+                recognition.stop();
+            } else {
+                if (recognition) recognition.start();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            micBtn.classList.remove('listening');
+        }
+
+        function updateAttemptsDisplay() {
+            if (currentAttempts > 0) {
+                attemptsDisplay.textContent = `Essai ${currentAttempts} / ${MAX_ATTEMPTS}`;
+            } else {
+                attemptsDisplay.textContent = "";
+            }
+        }
+
+        function nextProdWord() {
+            currentWordIndex++;
+            currentAttempts = 0;
+            updateAttemptsDisplay();
+            
+            if (currentWordIndex < productionWordsList.length) {
+                updateProductionUI();
+            } else {
+                wordDisplay.textContent = "🎉";
+                feedback.textContent = "Exercice terminé, bravo !";
+                feedback.style.color = "var(--success)";
+                progressDisplay.textContent = "";
+                micBtn.style.display = "none";
+            }
+        }
+
+        function updateProductionUI() {
+            wordDisplay.textContent = productionWordsList[currentWordIndex].text;
+            feedback.textContent = "Appuyez sur le micro pour commencer";
+            feedback.style.color = "var(--text-color)";
+            progressDisplay.textContent = `Mot ${currentWordIndex + 1} / ${productionWordsList.length}`;
+            updateAttemptsDisplay();
+        }
+
+        // Init Phase 4
+        updateProductionUI();
+
+    </script>
+</body>
+</html>
